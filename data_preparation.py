@@ -5,7 +5,7 @@ import cv2
 import pickle
 
 # function to read all images and labels from one folder append them into a list
-def create_data(directory, categories=['NORMAL','PNEUMONIA'], img_size = 256):
+def create_data(directory, categories=['NORMAL','PNEUMONIA'], img_size=128):
     data = []
 
     for category in categories:
@@ -64,7 +64,7 @@ def main():
         break
 
     # reshape image to a standardized and smaller size
-    img_size = 256
+    img_size = 128
     img_array_normalized = cv2.resize(img_array, (img_size, img_size))
     plt.imshow(img_array_normalized)
     plt.show()
