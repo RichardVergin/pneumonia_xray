@@ -18,11 +18,14 @@ def dataloader(path):
     print('data loaded: ', type(all_data_prepared))
 
     x_train = np.array(all_data_prepared['x_train'])
+    x_train = np.expand_dims(x_train, axis=3) # expand dimensions since grayscale
     y_train = np.array(all_data_prepared['y_train'])
-    x_train, y_train = shuffle(x_train, y_train, random_state=0)
+    x_train, y_train = shuffle(x_train, y_train, random_state=0) # shuffle before training
     x_test = np.array(all_data_prepared['x_test'])
+    x_test = np.expand_dims(x_train, axis=3)
     y_test = np.array(all_data_prepared['y_test'])
     x_val = np.array(all_data_prepared['x_val'])
+    x_val = np.expand_dims(x_train, axis=3)
     y_val = np.array(all_data_prepared['y_val'])
 
     return x_train, y_train, x_test, y_test, x_val, y_val
@@ -49,8 +52,8 @@ def cnn_model(shape):
 
     x = Conv2D(filters=1, kernel_size=1, strides=(1, 1), padding='same', activation='relu')(x)
     x = Flatten()(x)
-    x = Dense(128, activation='relu')(x)
-    output_layer = Dense(1, activation='softmax')(x)
+    x = Dense(128, activation='sigmoid')(x)
+    output_layer = Dense(1, activation='sigmoid')(x)
 
     model = Model(inputs=input_layer, outputs=output_layer)
     print(model.summary())
@@ -112,7 +115,7 @@ def main():
 
     # start training
     print('start training')
-    history, model = train_model(x_train, y_train, model, epochs=20, batch_size=64,
+    history, model = train_model(x_train, y_train, model, epochs=5, batch_size=64,
                                  path='C:/MyStuff/Kaggle_Practise/models/pneumonia_xray/cnn_checkpoint.h5')
     print('training finished')
 

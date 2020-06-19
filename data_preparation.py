@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import os
 import cv2
 import pickle
+from skimage.color import rgb2gray
 
 # function to read all images and labels from one folder append them into a list
 def create_data(directory, categories=['NORMAL','PNEUMONIA'], img_size=128):
@@ -14,7 +15,8 @@ def create_data(directory, categories=['NORMAL','PNEUMONIA'], img_size=128):
 
         for img in os.listdir(path):
             img_array = cv2.imread(os.path.join(path,img))
-            resized_array = cv2.resize(img_array, (img_size, img_size))
+            img_array = rgb2gray(img_array) # transform to RGB image
+            resized_array = cv2.resize(img_array, (img_size, img_size), interpolation=cv2.INTER_NEAREST)
             data.append([resized_array, class_num])
 
     return data
@@ -53,15 +55,33 @@ def main():
     valdir = os.path.abspath('C:/MyStuff/Kaggle_Practise/datasets/pneumonia_xray/val')
     CATEGORIES = ['NORMAL','PNEUMONIA']
 
-    # read first image of trainingsfolder to furhter analyze
-    for category in CATEGORIES:
-        trainpath = os.path.join(traindir, category) # path to normal and pneumonia dir
-        for img in os.listdir(trainpath):
-            img_array = cv2.imread(os.path.join(trainpath,img))
-            plt.imshow(img_array)
-            plt.show()
-            break
-        break
+    rows_healty = [0,1]
+    cols_healthy = [0,1,2]
+    rows_pneumenia = [2,3]
+    cols_pneumenia = [0,1,2]
+    path_pneumonia = os.path.join(traindir, 'Normal')
+    path_healthy = os.path.join(traindir, 'PNEUMONIA')
+    fig, axs = plt.subplots(nrows=4, ncols=3, figsize=(8, 8))
+    fig.suptitle('Compare healthy and pneumenic xrays')
+    plt.tight_layout()
+
+    counter = 0
+    for row in (rows_healty):
+        for col in (cols_healthy):
+            img = os.listdir(path_healthy)[counter]
+            img_array = cv2.imread(os.path.join(path_healthy, img))
+            axs[row, col].imshow(img_array)
+            axs[row, col].set_title('Healthy xray: row - {}, col - {}'.format(row, col))
+            counter = counter + 1
+
+    counter = 0
+    for row in (rows_pneumenia):
+        for col in (cols_pneumenia):
+            img = os.listdir(path_pneumonia)[counter]
+            img_array = cv2.imread(os.path.join(path_pneumonia, img))
+            axs[row, col].imshow(img_array)
+            axs[row, col].set_title('Pneumenic xray: row - {}, col - {}'.format(row, col))
+            counter = counter + 1
 
     # reshape image to a standardized and smaller size
     img_size = 128
@@ -72,17 +92,28 @@ def main():
     # create trainings, test and validation dataset
     print('create trainingsdata')
     data_train = create_data(traindir)
-    print('create testdata')
+    print('create testdata') 
     data_test = create_data(testdir)
     print('create validation data')
     data_val = create_data(valdir)
 
     # split images and labels
     x_train, y_train = split_data(data_train)
+    plt.imshow(x_train[0])
+    plt.show()
     x_test, y_test = split_data(data_test)
     x_val, y_val = split_data(data_val)
 
     # view distribution of labels
+    label_distribution(y_train)
+
+    # distribute trainings set more equal by copying the healty images
+    # for i in range(len(y_train)):
+    #    if y_train[i] == 0:
+    #        x_train.append(x_train[i])
+    #        y_train.append(y_train[i])
+
+    # view distribution of labels again
     label_distribution(y_train)
 
     print('datasets created - storing them in a dict')
