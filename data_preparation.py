@@ -16,7 +16,8 @@ def create_data(directory, categories=['NORMAL','PNEUMONIA'], img_size=128):
         for img in os.listdir(path):
             img_array = cv2.imread(os.path.join(path,img))
             img_array = rgb2gray(img_array) # transform to RGB image
-            resized_array = cv2.resize(img_array, (img_size, img_size), interpolation=cv2.INTER_NEAREST)
+            blurred_array = cv2.GaussianBlur(img_array,(5,5),cv2.BORDER_DEFAULT)
+            resized_array = cv2.resize(blurred_array, (img_size, img_size), interpolation=cv2.INTER_NEAREST)
             data.append([resized_array, class_num])
 
     return data

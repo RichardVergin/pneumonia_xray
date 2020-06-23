@@ -50,9 +50,10 @@ def cnn_model(shape):
     x = MaxPool2D(pool_size=(2,2))(x)
     x = Dropout(rate=0.5)(x)
 
-    x = Conv2D(filters=1, kernel_size=1, strides=(1, 1), padding='same', activation='relu')(x)
+    x = Conv2D(filters=1, kernel_size=1, strides=   (1, 1), padding='same', activation='relu')(x)
     x = Flatten()(x)
     x = Dense(128, activation='sigmoid')(x)
+    x = Dropout(rate=0.5)(x)
     output_layer = Dense(1, activation='sigmoid')(x)
 
     model = Model(inputs=input_layer, outputs=output_layer)
@@ -75,7 +76,7 @@ def train_model(x_train, y_train, model, epochs, batch_size, path):
     
     # start training
     history = model.fit(x_train, y_train, batch_size=batch_size, validation_split=0.2,
-                        epochs=epochs, shuffle=False, verbose=1, callbacks=[checkpoint])
+                        epochs=epochs, shuffle=True, verbose=1, callbacks=[checkpoint])
 
     return history, model
 
