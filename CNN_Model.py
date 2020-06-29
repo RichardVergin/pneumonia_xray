@@ -38,17 +38,17 @@ def cnn_model(shape):
     x = MaxPool2D(pool_size=(2,2))(x)
     x = Dropout(rate=0.5)(x) 
 
-    x = Conv2D(filters=64, kernel_size=5, strides=(1, 1), padding='same', activation='relu')(x)
-    x = Conv2D(filters=64, kernel_size=5, strides=(1, 1), padding='same', activation='relu')(x)
+    x = Conv2D(filters=32, kernel_size=5, strides=(1, 1), padding='same', activation='relu')(x)
+    x = Conv2D(filters=32, kernel_size=5, strides=(1, 1), padding='same', activation='relu')(x)
     x = BatchNormalization()(x)
     x = MaxPool2D(pool_size=(2,2))(x)
     x = Dropout(rate=0.5)(x)
 
-    x = Conv2D(filters=128, kernel_size=5, strides=(1, 1), padding='same', activation='relu')(x)
-    x = Conv2D(filters=128, kernel_size=5, strides=(1, 1), padding='same', activation='relu')(x)
-    x = BatchNormalization()(x)
-    x = MaxPool2D(pool_size=(2,2))(x)
-    x = Dropout(rate=0.5)(x)
+    # x = Conv2D(filters=128, kernel_size=5, strides=(1, 1), padding='same', activation='relu')(x)
+    # x = Conv2D(filters=128, kernel_size=5, strides=(1, 1), padding='same', activation='relu')(x)
+    # x = BatchNormalization()(x)
+    # x = MaxPool2D(pool_size=(2,2))(x)
+    # x = Dropout(rate=0.5)(x)
 
     x = Conv2D(filters=1, kernel_size=1, strides=   (1, 1), padding='same', activation='relu')(x)
     x = Flatten()(x)
@@ -116,7 +116,7 @@ def main():
 
     # start training
     print('start training')
-    history, model = train_model(x_train, y_train, model, epochs=5, batch_size=64,
+    history, model = train_model(x_train, y_train, model, epochs=20, batch_size=32,
                                  path='C:/MyStuff/Kaggle_Practise/models/pneumonia_xray/cnn_checkpoint.h5')
     print('training finished')
 
