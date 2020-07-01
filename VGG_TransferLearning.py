@@ -1,3 +1,4 @@
+import itertools
 import pickle as pkl
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,7 +11,7 @@ from keras.layers import Conv2D, MaxPool2D, Dropout, Flatten, Dense, Input, Batc
 from keras.callbacks import History, ModelCheckpoint
 from keras.optimizers import Adam
 from keras.losses import BinaryCrossentropy
-from tensorflow.math import confusion_matrix
+from sklearn.metrics import confusion_matrix
 from sklearn.utils import shuffle
 
 def dataloader(path):
