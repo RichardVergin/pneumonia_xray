@@ -14,6 +14,8 @@ from keras.losses import BinaryCrossentropy
 from sklearn.metrics import confusion_matrix
 from sklearn.utils import shuffle
 
+from src.global_variables import DATA_DIR, MODEL_DIR
+
 def dataloader(path):
     with open(path, 'rb') as pickle_file:
         all_data_prepared = pkl.load(pickle_file)
@@ -124,10 +126,13 @@ def plot_confusion_matrix(cm, classes, normalize=False, title='Confusion Matrix'
     plt.show()
 
 def main():
+    path_prepared_data = DATA_DIR / 'all_data_prepared_rgb.pickle'
+    path_checkpoint = MODEL_DIR / 'transfer_learning' / 'transfer_checkpoint_rgb.h5'
+    path_model = MODEL_DIR / 'transfer_learning' / 'transfermodel_rgb.h5'
+
     # load data
     print('loading data')
-    x_train, y_train, x_test, y_test, x_val, y_val = dataloader(
-        'C:/MyStuff/Kaggle_Practise/datasets/pneumonia_xray/all_data_prepared_rgb.pickle')
+    x_train, y_train, x_test, y_test, x_val, y_val = dataloader(str(path_prepared_data))
 
     # define model
     print('our shape = {}'.format(np.shape(x_train[0])))
@@ -136,7 +141,7 @@ def main():
     # start training
     print('start training')
     history, model = train_model(x_train, y_train, model, epochs=50, batch_size=32,
-                                 path='C:/MyStuff/Kaggle_Practise/models/pneumonia_xray/transfer_checkpoint_rgb.h5')
+                                 path=str(path_checkpoint))
     print('training finished')
 
     # print main KPIs
@@ -164,7 +169,7 @@ def main():
     plt.show()
 
     # evaluate model
-    model.load_weights('C:/MyStuff/Kaggle_Practise/models/pneumonia_xray/transfer_checkpoint_rgb.h5')
+    model.load_weights(str(path_checkpoint))
     y_pred, y_rounded = eval_model(model, x_test, y_test, batch_size=32)
     cm =  confusion_matrix(y_test, y_rounded)
     cm_plot_labels = ['No Pneumonia', 'Pneumonia']
@@ -172,7 +177,7 @@ def main():
 
 
     # save model
-    model.save('C:/MyStuff/Kaggle_Practise/models/pneumonia_xray/transfermodel_rgb.h5')
+    model.save(str(path_model))
 
 
 if __name__ == "__main__":

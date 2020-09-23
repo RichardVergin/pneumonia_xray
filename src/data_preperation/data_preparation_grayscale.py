@@ -5,6 +5,8 @@ import cv2
 import pickle
 from skimage.color import rgb2gray
 
+from src.global_variables import DATA_DIR
+
 # function to read all images and labels from one folder append them into a list
 def create_data(directory, categories=['NORMAL','PNEUMONIA'], img_size=128):
     data = []
@@ -15,6 +17,7 @@ def create_data(directory, categories=['NORMAL','PNEUMONIA'], img_size=128):
 
         for img in os.listdir(path):
             img_array = cv2.imread(os.path.join(path,img))
+            img_array = rgb2gray(img_array) # transform to grayscale image
             blurred_array = cv2.GaussianBlur(img_array,(5,5),cv2.BORDER_DEFAULT)
             resized_array = cv2.resize(blurred_array, (img_size, img_size), interpolation=cv2.INTER_NEAREST)
             data.append([resized_array, class_num])
@@ -49,10 +52,12 @@ def label_distribution(dataset):
     print("percentage of normal xrays = {}".format(percentage_normal))
     print("percentage of pneumonia xrays = {}".format(percentage_pneumonia))
 
+
 def main():
-    traindir = os.path.abspath('C:/MyStuff/Kaggle_Practise/datasets/pneumonia_xray/train')
-    testdir = os.path.abspath('C:/MyStuff/Kaggle_Practise/datasets/pneumonia_xray/test')
-    valdir = os.path.abspath('C:/MyStuff/Kaggle_Practise/datasets/pneumonia_xray/val')
+    datadir = DATA_DIR
+    traindir = DATA_DIR / 'train'
+    testdir = DATA_DIR / 'test'
+    valdir = DATA_DIR / 'val'
     CATEGORIES = ['NORMAL','PNEUMONIA']
 
     rows_healty = [0,1]
@@ -117,7 +122,7 @@ def main():
     label_distribution(y_train)
 
     print('datasets created - storing them in a dict')
-    all_data_prepared_rgb = {
+    all_data_prepared = {
     'x_train': x_train,
     'y_train': y_train,
     'x_test': x_test,
@@ -126,9 +131,9 @@ def main():
     'y_val': y_val
     }
 
-    with open('C:/MyStuff/Kaggle_Practise/datasets/pneumonia_xray/all_data_prepared_rgb.pickle', 'wb') as handle:
+    with open(str(datadir) + '/all_data_prepared.pickle', 'wb') as handle:
         print('dumping dict')
-        pickle.dump(all_data_prepared_rgb, handle)
+        pickle.dump(all_data_prepared, handle)
 
 
 if __name__ == "__main__":

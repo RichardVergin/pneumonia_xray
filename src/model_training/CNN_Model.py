@@ -13,6 +13,8 @@ from keras.losses import BinaryCrossentropy
 from sklearn.metrics import confusion_matrix
 from sklearn.utils import shuffle
 
+from src.global_variables import DATA_DIR, MODEL_DIR
+
 def dataloader(path):
     with open(path, 'rb') as pickle_file:
         all_data_prepared = pkl.load(pickle_file)
@@ -131,18 +133,20 @@ def plot_confusion_matrix(cm, classes, normalize=False, title='Confusion Matrix'
     plt.show()
 
 def main():
+    path_prepared_data = DATA_DIR / 'all_data_prepared.pickle'
+    path_checkpoint = MODEL_DIR / 'new_architecture' / 'cnn_checkpoint.h5'
+    path_model = MODEL_DIR / 'new_architecture' / 'cnn_model.h5'
+
     # load data
     print('loading data')
-    x_train, y_train, x_test, y_test, x_val, y_val = dataloader(
-        'C:/MyStuff/Kaggle_Practise/datasets/pneumonia_xray/all_data_prepared.pickle')
+    x_train, y_train, x_test, y_test, x_val, y_val = dataloader(str(path_prepared_data))
 
     # define model
     model = cnn_model(shape=np.shape(x_train[0]))
 
     # start training
     print('start training')
-    history, model = train_model(x_train, y_train, model, epochs=50, batch_size=32,
-                                 path='C:/MyStuff/Kaggle_Practise/models/pneumonia_xray/cnn_checkpoint.h5')
+    history, model = train_model(x_train, y_train, model, epochs=50, batch_size=32, path=str(path_checkpoint))
     print('training finished')
 
     # print main KPIs
@@ -170,14 +174,14 @@ def main():
     plt.show()
 
     # evaluate model
-    model.load_weights('C:/MyStuff/Kaggle_Practise/models/pneumonia_xray/cnn_checkpoint.h5')
+    model.load_weights(str(path_checkpoint))
     y_pred, y_rounded = eval_model(model, x_test, y_test, batch_size=32)
     cm =  confusion_matrix(y_test, y_rounded)
     cm_plot_labels = ['No Pneumonia', 'Pneumonia']
     plot_confusion_matrix(cm, cm_plot_labels, title='Confusion Matrix prediction test set')
 
     # save model
-    model.save('C:/MyStuff/Kaggle_Practise/models/pneumonia_xray/cnn_model.h5')
+    model.save(str(path_model))
 
 
 if __name__ == "__main__":
