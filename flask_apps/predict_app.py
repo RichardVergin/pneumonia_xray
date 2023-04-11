@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage.color import rgb2gray
 
-from src.global_variables import MODEL_DIR
+from src.config import MODEL_DIR
 from flask_apps.server_variables import UPLOAD_DIR
 
 app = Flask(__name__)

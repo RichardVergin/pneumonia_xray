@@ -1,31 +1,39 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import os
 import cv2
 import pickle
 from skimage.color import rgb2gray
+from src.config import DATA_DIR
 
-from src.global_variables import DATA_DIR
 
 # function to read all images and labels from one folder append them into a list
-def create_data(directory, categories=['NORMAL','PNEUMONIA'], img_size=128):
+def create_data(directory, categories=['NORMAL', 'PNEUMONIA'], img_size=128):
     data = []
 
     for category in categories:
-        path = os.path.join(directory, category) # path to normal and pneumonia dir
-        class_num = categories.index(category) # label
+        path = os.path.join(directory, category)  # path to normal and pneumonia dir
+        class_num = categories.index(category)  # label
 
         for img in os.listdir(path):
             img_array = cv2.imread(os.path.join(path,img))
-            img_array = rgb2gray(img_array) # transform to grayscale image
-            blurred_array = cv2.GaussianBlur(img_array,(5,5),cv2.BORDER_DEFAULT)
+            img_array = rgb2gray(img_array)  # transform to grayscale image
+            blurred_array = cv2.GaussianBlur(img_array, (5, 5), cv2.BORDER_DEFAULT)
             resized_array = cv2.resize(blurred_array, (img_size, img_size), interpolation=cv2.INTER_NEAREST)
             data.append([resized_array, class_num])
 
     return data
 
-# function to split images and labels and store them into seperated lists
+
 def split_data(data):
+    """
+    function to split images and labels and store them into seperated lists
+    Args:
+        data: str
+
+    Returns:
+        images seperated in lists
+
+    """
     x = []
     y = []
 
@@ -34,6 +42,7 @@ def split_data(data):
         y.append(label)
     
     return x, y
+
 
 # function to view distribution of labels
 def label_distribution(dataset):
@@ -58,7 +67,7 @@ def main():
     traindir = DATA_DIR / 'train'
     testdir = DATA_DIR / 'test'
     valdir = DATA_DIR / 'val'
-    CATEGORIES = ['NORMAL','PNEUMONIA']
+    CATEGORIES = ['NORMAL', 'PNEUMONIA']
 
     rows_healty = [0,1]
     cols_healthy = [0,1,2]
@@ -123,12 +132,12 @@ def main():
 
     print('datasets created - storing them in a dict')
     all_data_prepared = {
-    'x_train': x_train,
-    'y_train': y_train,
-    'x_test': x_test,
-    'y_test': y_test,
-    'x_val': x_val,
-    'y_val': y_val
+        'x_train': x_train,
+        'y_train': y_train,
+        'x_test': x_test,
+        'y_test': y_test,
+        'x_val': x_val,
+        'y_val': y_val
     }
 
     with open(str(datadir) + '/all_data_prepared.pickle', 'wb') as handle:

@@ -1,11 +1,10 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import os
 import cv2
 import pickle
-from skimage.color import rgb2gray
 
-from src.global_variables import DATA_DIR
+from src.config import DATA_DIR
+
 
 # function to read all images and labels from one folder append them into a list
 def create_data(directory, categories=['NORMAL','PNEUMONIA'], img_size=128):
@@ -23,6 +22,7 @@ def create_data(directory, categories=['NORMAL','PNEUMONIA'], img_size=128):
 
     return data
 
+
 # function to split images and labels and store them into seperated lists
 def split_data(data):
     x = []
@@ -33,6 +33,7 @@ def split_data(data):
         y.append(label)
     
     return x, y
+
 
 # function to view distribution of labels
 def label_distribution(dataset):
@@ -51,17 +52,18 @@ def label_distribution(dataset):
     print("percentage of normal xrays = {}".format(percentage_normal))
     print("percentage of pneumonia xrays = {}".format(percentage_pneumonia))
 
+
 def main():
     datadir = DATA_DIR
     traindir = DATA_DIR / 'train'
     testdir = DATA_DIR / 'test'
     valdir = DATA_DIR / 'val'
-    CATEGORIES = ['NORMAL','PNEUMONIA']
+    CATEGORIES = ['NORMAL', 'PNEUMONIA']
 
-    rows_healty = [0,1]
-    cols_healthy = [0,1,2]
-    rows_pneumenia = [2,3]
-    cols_pneumenia = [0,1,2]
+    rows_healty = [0, 1]
+    cols_healthy = [0, 1, 2]
+    rows_pneumenia = [2, 3]
+    cols_pneumenia = [0, 1, 2]
     path_pneumonia = os.path.join(traindir, 'Normal')
     path_healthy = os.path.join(traindir, 'PNEUMONIA')
     fig, axs = plt.subplots(nrows=4, ncols=3, figsize=(8, 8))
@@ -121,12 +123,12 @@ def main():
 
     print('datasets created - storing them in a dict')
     all_data_prepared_rgb = {
-    'x_train': x_train,
-    'y_train': y_train,
-    'x_test': x_test,
-    'y_test': y_test,
-    'x_val': x_val,
-    'y_val': y_val
+        'x_train': x_train,
+        'y_train': y_train,
+        'x_test': x_test,
+        'y_test': y_test,
+        'x_val': x_val,
+        'y_val': y_val
     }
 
     with open(str(datadir) + '/all_data_prepared_rgb.pickle', 'wb') as handle:
